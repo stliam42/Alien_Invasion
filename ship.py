@@ -18,3 +18,6 @@ class Ship():
     def blitme(self):
         """ Paint the ship in the current position"""
         self.screen.blit(self.image, self.rect)
+
+
+    self.x = 10
