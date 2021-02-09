@@ -1,8 +1,9 @@
 import sys
-
 import pygame
 
-class AlienInvasion:
+for settings import Settings
+
+class AlienInvasion():
     """ Class for resourses managment and game behavior"""
 
     def __init__(self):
