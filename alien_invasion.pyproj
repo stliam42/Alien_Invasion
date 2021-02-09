@@ -23,6 +23,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="alien_invasion.py" />
+    <Compile Include="bullet.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="settings.py">
       <SubType>Code</SubType>
     </Compile>
