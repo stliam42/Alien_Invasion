@@ -36,6 +36,8 @@ class AlienInvasion():
             self._check_events()
             self.ship.update()
             self._update_bullets()
+            self._check_fleet_edges()
+            self._update_aliens()
             self._update_screen()
             
 
@@ -53,8 +55,10 @@ class AlienInvasion():
         """ Change and display screen """
         self.screen.fill(self.settings.bg_color)
         self.ship.blitme()
+
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
+
         self.aliens.draw(self.screen)
         pygame.display.flip()
 
@@ -90,10 +94,55 @@ class AlienInvasion():
                 self.bullets.remove(bullet)
 
     def _create_fleet(self):
-        """ Create an alien fleet """
-        # Creating an alien
+        """ Creating an alien fleet """
+        for row_number in range(self._get_number_rows()):
+            for alien_number in range(self._get_number_aliens_in_a_row()):
+                self._create_alien(alien_number, row_number)
+            
+
+    def _create_alien(self, alien_number, row_number):
+        """ Creating an alien and placing it in a row """
         alien = Alien(self)
+        alien_width, alien_eight = alien.rect.size
+        alien.x = alien_width + 2 * alien_width * alien_number
+        alien.rect.x = alien.x
+        alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
         self.aliens.add(alien)
+
+    def _get_number_aliens_in_a_row(self):
+        """ Calculating the number of aliens in a row """
+        alien = Alien(self)
+        alien_width = alien.rect.width
+        avaliable_space_x = self.settings.screen_width - (2 * alien_width)
+        number_aliens_x = avaliable_space_x // (2 * alien_width)
+        return number_aliens_x
+
+    def _get_number_rows(self):
+        """ Calculating the number of row """
+        alien = Alien(self)
+        alien_height = alien.rect.height
+        ship_height = self.ship.rect.height
+        avaliable_space_y = (self.settings.screen_height - 
+                             (4 * alien_height) - ship_height)
+        number_rows = avaliable_space_y // (2 * alien_height)
+        return number_rows
+
+    def _update_aliens(self):
+        self.aliens.update()
+
+    def _check_fleet_edges(self):
+        """ Check the fleet has reached 
+            the edge of the screen """
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+
+    def _change_fleet_direction(self):
+        """ Drop the fleet and change the direction """
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
 
 if __name__ == '__main__':
     # Create the instance and start the game
