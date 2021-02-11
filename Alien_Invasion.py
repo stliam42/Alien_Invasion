@@ -53,8 +53,10 @@ class AlienInvasion():
         """ Change and display screen """
         self.screen.fill(self.settings.bg_color)
         self.ship.blitme()
+
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
+
         self.aliens.draw(self.screen)
         pygame.display.flip()
 
@@ -90,10 +92,36 @@ class AlienInvasion():
                 self.bullets.remove(bullet)
 
     def _create_fleet(self):
-        """ Create an alien fleet """
-        # Creating an alien
+        """ Creating an alien fleet """
+        for alien_number in range(self._get_number_aliens_row()):
+            self._create_alien(alien_number)
+            
+
+    def _create_alien(self, alien_number):
+        """ Creating an alien and placing it in a row """
         alien = Alien(self)
+        alien_width = alien.rect.width
+        alien.x = alien_width + 2 * alien_width * alien_number
+        alien.rect.x = alien.x
         self.aliens.add(alien)
+
+    def _get_number_aliens_row(self):
+        """ Calculating the number of aliens in a row """
+        alien = Alien(self)
+        alien_width = alien.rect.width
+        avaliable_space_x = self.settings.screen_width - (2 * alien_width)
+        number_aliens_x = avaliable_space_x // (2 * alien_width)
+        return number_aliens_x
+
+    def _get_number_aliens_column(self)
+        """ Calculating the number of aliens in a column """
+        alien = Alien(self)
+        alien_height = alien.rect.hieght
+        ship_height = self.ship.rect.height
+        avalaible_space_y = (self.settings.screen_height - 
+                             (3 * alien_height) - ship_height)
+        number_rows = avaliable_space_y // (2 * alien_height)
+        return number_rows
 
 if __name__ == '__main__':
     # Create the instance and start the game

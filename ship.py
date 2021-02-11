@@ -15,6 +15,7 @@ class Ship():
 
         # Every new ship spawn at the bottom of the screen
         self.rect.midbottom = self.screen_rect.midbottom
+        self.rect.y -= 10
 
         #Moving flags
         self.moving_right = False
