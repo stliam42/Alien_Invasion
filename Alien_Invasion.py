@@ -102,6 +102,10 @@ class AlienInvasion():
             self.bullets.empty()
             self._create_fleet()
 
+        # Check collisions
+        collisions = pygame.sprite.groupcollide(
+            self.bullets, self.aliens, True, True)
+
     def _create_fleet(self):
         """ Create an alien fleet """
         for row_number in range(self._get_number_rows()):
