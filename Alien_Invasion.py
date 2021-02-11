@@ -92,6 +92,15 @@ class AlienInvasion():
         for bullet in self.bullets.copy():
             if bullet.rect.bottom < 0:
                 self.bullets.remove(bullet)
+        self._check_bullet_aliens_collisions()
+
+    def _check_bullet_aliens_collisions(self):
+        """Check collisions"""
+        collisions = pygame.sprite.groupcollide(
+            self.bullets, self.aliens, True, True)
+        if not self.aliens:
+            self.bullets.empty()
+            self._create_fleet()
 
     def _create_fleet(self):
         """ Create an alien fleet """
@@ -143,7 +152,4 @@ class AlienInvasion():
             alien.rect.y += self.settings.fleet_drop_speed
         self.settings.fleet_direction *= -1
 
-if __name__ == '__main__':
-    # Create the instance and start the game
-    ai = AlienInvasion()
-    ai.run_game()
+

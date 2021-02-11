@@ -5,7 +5,7 @@
     <ProjectGuid>78bd3c05-2f63-4d4c-9c12-fb74ed600620</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>alien_invasion.py</StartupFile>
+    <StartupFile>game.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -27,6 +27,9 @@
     </Compile>
     <Compile Include="alien_invasion.py" />
     <Compile Include="bullet.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="game.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="settings.py">
