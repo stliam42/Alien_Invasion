@@ -10,7 +10,7 @@ class Ship():
         self.settings = ai_game.settings
 
         # Download a ship image and get rectangle
-        self.image = pygame.image.load('images/ship.bmp')
+        self.image = pygame.image.load('images/x-wing.bmp')
         self.rect = self.image.get_rect()
 
         # Every new ship spawn at the bottom of the screen
