@@ -23,7 +23,7 @@ class Window():
             if side:
                 self.rect.right, self.rect.top = position
             else:
-                self.rect.left, self.rect.top = position
+            self.rect.left, self.rect.top = position
 
         self.update_text(msg)
         self._prep_msg()

@@ -35,16 +35,6 @@ class AlienInvasion():
         # Statistic
         self.stats = GameStats(self)
 
-        # Creating 'Play' button
-        self.play_button = Button(self, "Play")
-
-        # Creating window for ships and score
-        self.score_window = Window(self, None, 1, 1080, 10)
-        self.ships_left_window = Window(self, None, 0, 10, 10)
-        self.score_window.button_color = self.settings.bg_color
-        self.ships_left_window.button_color = self.settings.bg_color
-
-
     def run_game(self):
         """ Run the game cycle """
         while True:
