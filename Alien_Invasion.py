@@ -1,6 +1,7 @@
 import sys
 import pygame
 from time import sleep
+from time import strftime
 
 from settings import Settings
 from ship import Ship
@@ -9,6 +10,7 @@ from alien import Alien
 from game_stats import GameStats
 from button import Button
 from window import Window
+from timer import Timer
 
 
 class AlienInvasion():
@@ -35,6 +37,32 @@ class AlienInvasion():
         # Statistic
         self.stats = GameStats(self)
 
+        # Play button
+        self.play_button = Button(self, "Play")
+
+        # timer
+        self.timer = Timer()
+
+        # Windows
+        self._create_windows()
+
+    def _create_windows(self):
+        """Creating score, ships, time windows"""
+        # Score
+        self.score_window = Window(self, f"Score: {self.stats.score}")
+        self.score_window.msg_image_rect.right = self.screen.get_rect().right - 20
+        self.score_window.msg_image_rect.top = 10
+
+        # Ships
+        self.ships_left_window = Window(self, f"Ships left: {self.stats.ships_left}")
+        self.ships_left_window.msg_image_rect.left = self.screen.get_rect().left + 10
+        self.ships_left_window.msg_image_rect.top = 10
+
+        # Time
+        self.time_window = Window(self, "00:00")
+        self.time_window.msg_image_rect.midtop = self.screen.get_rect().midtop
+        self.time_window.msg_image_rect.top = 10
+
     def run_game(self):
         """ Run the game cycle """
         while True:
@@ -43,7 +71,9 @@ class AlienInvasion():
                 self.ship.update()
                 self._update_bullets()
                 self._check_fleet_edges()
+                self._update_text()
                 self._update_aliens()
+                self.timer.update_time()
             self._update_screen()
             
 
@@ -60,13 +90,19 @@ class AlienInvasion():
         # 'Play' button is displayed when game isn't active
         if not self.stats.game_active:
             self.play_button.draw_button()
-        self.score_window.draw_window()
-        self.ships_left_window.draw_window()
-        self.score_window.update_text(f"Score: {self.stats.score}")
-        self.ships_left_window.update_text(f"Ships left: {self.stats.ships_left}")
 
+        self._draw_window()
         pygame.display.flip()
 
+    def _draw_window(self):
+        self.score_window.draw_window()
+        self.ships_left_window.draw_window()
+        self.time_window.draw_window()
+
+    def _update_text(self):
+        self.score_window.update_text(f"Score: {self.stats.score}")
+        self.ships_left_window.update_text(f"Ships left: {self.stats.ships_left}")
+        self.time_window.update_text(self._format_time())
 
     def _check_events(self):
         """ Tracking the keyboard and mouse """
@@ -102,6 +138,9 @@ class AlienInvasion():
         # Creating new fleet
         self._create_fleet()
         self.ship.center_ship()
+
+        # Reset timer
+        self.timer.reset_time()
 
     def _check_keydown_events(self, event):
         if event.key == pygame.K_RIGHT:
@@ -239,3 +278,10 @@ class AlienInvasion():
             if alien.rect.bottom >= screen_rect.bottom:
                 self._ship_hit()
                 break
+
+    def _format_time(self):
+        seconds = self.timer.time // 1000 
+        minutes = seconds // 60
+        seconds -= minutes * 60 
+        return "{0:02}:{1:02}".format(minutes, seconds)
+
