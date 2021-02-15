@@ -13,6 +13,7 @@ from window import Window
 from timer import Timer
 
 
+
 class AlienInvasion():
     """ Class for resourses managment and game behavior. """
 
@@ -49,7 +50,7 @@ class AlienInvasion():
     def _create_windows(self):
         """Creating score, ships, time windows"""
         # Score
-        self.score_window = Window(self, f"Score: {self.stats.score}")
+        self.score_window = Window(self, str(self.stats.score))
         self.score_window.msg_image_rect.right = self.screen.get_rect().right - 20
         self.score_window.msg_image_rect.top = 10
 
@@ -62,6 +63,9 @@ class AlienInvasion():
         self.time_window = Window(self, "00:00")
         self.time_window.msg_image_rect.midtop = self.screen.get_rect().midtop
         self.time_window.msg_image_rect.top = 10
+
+        # Level
+        #self.level_window
 
     def run_game(self):
         """ Run the game cycle """
@@ -99,9 +103,13 @@ class AlienInvasion():
         self.ships_left_window.draw_window()
         self.time_window.draw_window()
 
+    def _update_score(self):
+        rounded_score = round(self.stats.score, -1)
+        score_str = '{:,}'.format(rounded_score)
+        self.score_window.update_text(score_str)
+        self.score_window.msg_image_rect.right = self.screen.get_rect().right - 20
+
     def _update_text(self):
-        self.score_window.update_text(f"Score: {self.stats.score}")
-        self.ships_left_window.update_text(f"Ships left: {self.stats.ships_left}")
         self.time_window.update_text(self._format_time())
 
     def _check_events(self):
@@ -140,7 +148,11 @@ class AlienInvasion():
         self.ship.center_ship()
 
         # Reset timer
+        self.timer.update_time()
         self.timer.reset_time()
+
+        # Reset settings
+        self.settings.initialize_dynamic_settings()
 
     def _check_keydown_events(self, event):
         if event.key == pygame.K_RIGHT:
@@ -183,10 +195,12 @@ class AlienInvasion():
             self.bullets, self.aliens, True, True)
 
         for colission in  collisions:
-            self.stats.score +=1
+            self.stats.score += self.settings.alien_score
+            self._update_score()
 
         if not self.aliens:
             self.bullets.empty()
+            self.settings.increase_speed()
             self._create_fleet()
 
         # Check collisions
@@ -264,6 +278,9 @@ class AlienInvasion():
             self._create_fleet()
             self.ship.center_ship()
 
+            # Update ship's counter
+            self.ships_left_window.update_text(f"Ships left: {self.stats.ships_left}")
+
             sleep(1)
         else:
             self.stats.ships_left = 0
@@ -284,4 +301,6 @@ class AlienInvasion():
         minutes = seconds // 60
         seconds -= minutes * 60 
         return "{0:02}:{1:02}".format(minutes, seconds)
+
+
 
