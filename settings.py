@@ -41,4 +41,3 @@ class Settings():
         self.alien_speed *= self.speedup_scale
         self.bullet_speed *= self.speedup_scale
         self.alien_score = int(self.score_scale * self.alien_score)
-            

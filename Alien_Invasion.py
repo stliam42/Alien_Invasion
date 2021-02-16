@@ -8,9 +8,6 @@ from ship import Ship
 from bullet import Bullet
 from alien import Alien
 from game_stats import GameStats
-from button import Button
-from window import Window
-from timer import Timer
 from interface import Interface
 
 
@@ -60,7 +57,6 @@ class AlienInvasion():
                 self.interface.update_time_field()
             self._update_screen()
             
-
     def _update_screen(self):
         """ Change and display screen """
         self.screen.fill(self.settings.bg_color)
@@ -282,7 +278,6 @@ class AlienInvasion():
             self.stats.game_active = False
             pygame.mouse.set_visible(True)
 
-       
     def _check_aliens_bottom(self):
         """Checks if the aliens have made it to the bottom of the screen."""
         screen_rect = self.screen.get_rect()
@@ -299,5 +294,3 @@ class AlienInvasion():
         except:
             pass
         sys.exit()
-
-

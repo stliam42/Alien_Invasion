@@ -29,16 +29,7 @@
     <Compile Include="bullet.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="button.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="interface.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="timer.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="window.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="game.py">

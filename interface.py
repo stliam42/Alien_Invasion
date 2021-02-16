@@ -1,8 +1,22 @@
 import pygame.font
 from pygame.sprite import Group
+from pygame.time import Clock
 
-from timer import Timer
 from ship import Ship
+
+class Timer():
+
+    clock = Clock()
+
+    def __init__(self):
+        self.time = 0
+
+    def update_time(self):
+        self.time += self.clock.tick()
+
+    def reset_time(self):
+        self.update_time()
+        self.time = 0
 
 class Button():
     """Button class"""
@@ -148,8 +162,3 @@ class Interface():
             ship.rect.x = 10 + ship_member * ship.rect.width
             ship.rect.y = 10
             self.ships.add(ship)
-
-
-
-
-
