@@ -1,7 +1,7 @@
 import sys
 import pygame
 from time import sleep
-from time import strftime
+import json
 
 from settings import Settings
 from ship import Ship
@@ -12,7 +12,6 @@ from button import Button
 from window import Window
 from timer import Timer
 from interface import Interface
-
 
 
 class AlienInvasion():
@@ -39,20 +38,15 @@ class AlienInvasion():
         # Statistic
         self.stats = GameStats(self)
 
+        # Load best score
+        try:
+            with open("best_score.json") as f:
+                self.stats.best_score = json.load(f)
+        except:
+            pass
+
         # Interface
         self.interface = Interface(self)
-
-        # Windows
-        self._create_windows()
-
-    def _create_windows(self):
-        """Creating score, ships, time windows"""
-
-        # Ships
-        self.ships_left_window = Window(self, f"Ships left: {self.stats.ships_left}")
-        self.ships_left_window.msg_image_rect.left = self.screen.get_rect().left + 10
-        self.ships_left_window.msg_image_rect.top = 10
-
 
     def run_game(self):
         """ Run the game cycle """
@@ -81,11 +75,7 @@ class AlienInvasion():
         if not self.stats.game_active:
             self.interface.play_button.draw()
         self.interface.update_interface()
-        self._draw_window()
         pygame.display.flip()
-
-    def _draw_window(self):
-        self.ships_left_window.draw_window()
 
     def _update_score(self):
         rounded_score = round(self.stats.score, -1)
@@ -97,7 +87,7 @@ class AlienInvasion():
         """ Tracking the keyboard and mouse """
         for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    sys.exit()
+                    self._exit_game()
                 elif event.type == pygame.KEYDOWN:
                     self._check_keydown_events(event)
                 elif event.type == pygame.KEYUP:
@@ -130,6 +120,7 @@ class AlienInvasion():
 
         # Reset timer
         self.interface.timer.reset_time()
+        self.interface.update_ships()
 
         # Update reseted interface
         self.interface.update_score()
@@ -141,7 +132,7 @@ class AlienInvasion():
     def _check_keydown_events(self, event):
         # Exit by 'Q'
         if event.key == pygame.K_q:
-            sys.exit()
+            self._exit_game()
         if self.stats.game_active:
             if event.key == pygame.K_RIGHT:
                 self.ship.moving_right = True
@@ -273,7 +264,7 @@ class AlienInvasion():
         if self.stats.ships_left > 1:
             #Decrease ships_left
             self.stats.ships_left -= 1
-
+            self.interface.update_ships()
             #Deleting aliens and bullets
             self.aliens.empty()
             self.bullets.empty()
@@ -300,7 +291,13 @@ class AlienInvasion():
                 self._ship_hit()
                 break
 
-
-
+    def _exit_game(self):
+        file = "best_score.json"
+        try:
+            with open(file, 'w') as f:
+                json.dump(self.stats.best_score, f)
+        except:
+            pass
+        sys.exit()
 
 
