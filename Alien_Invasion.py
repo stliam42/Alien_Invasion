@@ -11,6 +11,7 @@ from game_stats import GameStats
 from button import Button
 from window import Window
 from timer import Timer
+from interface import Interface
 
 
 
@@ -38,34 +39,20 @@ class AlienInvasion():
         # Statistic
         self.stats = GameStats(self)
 
-        # Play button
-        self.play_button = Button(self, "Play")
-
-        # timer
-        self.timer = Timer()
+        # Interface
+        self.interface = Interface(self)
 
         # Windows
         self._create_windows()
 
     def _create_windows(self):
         """Creating score, ships, time windows"""
-        # Score
-        self.score_window = Window(self, str(self.stats.score))
-        self.score_window.msg_image_rect.right = self.screen.get_rect().right - 20
-        self.score_window.msg_image_rect.top = 10
 
         # Ships
         self.ships_left_window = Window(self, f"Ships left: {self.stats.ships_left}")
         self.ships_left_window.msg_image_rect.left = self.screen.get_rect().left + 10
         self.ships_left_window.msg_image_rect.top = 10
 
-        # Time
-        self.time_window = Window(self, "00:00")
-        self.time_window.msg_image_rect.midtop = self.screen.get_rect().midtop
-        self.time_window.msg_image_rect.top = 10
-
-        # Level
-        #self.level_window
 
     def run_game(self):
         """ Run the game cycle """
@@ -75,9 +62,8 @@ class AlienInvasion():
                 self.ship.update()
                 self._update_bullets()
                 self._check_fleet_edges()
-                self._update_text()
                 self._update_aliens()
-                self.timer.update_time()
+                self.interface.update_time_field()
             self._update_screen()
             
 
@@ -93,24 +79,19 @@ class AlienInvasion():
 
         # 'Play' button is displayed when game isn't active
         if not self.stats.game_active:
-            self.play_button.draw_button()
-
+            self.interface.play_button.draw()
+        self.interface.update_interface()
         self._draw_window()
         pygame.display.flip()
 
     def _draw_window(self):
-        self.score_window.draw_window()
         self.ships_left_window.draw_window()
-        self.time_window.draw_window()
 
     def _update_score(self):
         rounded_score = round(self.stats.score, -1)
         score_str = '{:,}'.format(rounded_score)
-        self.score_window.update_text(score_str)
-        self.score_window.msg_image_rect.right = self.screen.get_rect().right - 20
-
-    def _update_text(self):
-        self.time_window.update_text(self._format_time())
+        self.interface.score_field.update_text()
+        self.interface.score_field.msg_image_rect.right = self.screen.get_rect().right - 20
 
     def _check_events(self):
         """ Tracking the keyboard and mouse """
@@ -126,7 +107,7 @@ class AlienInvasion():
                     self._check_play_button(mouse_pos)
 
     def _check_play_button(self, mouse_pos):
-        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+        button_clicked = self.interface.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.stats.game_active:
             self._start_game()
 
@@ -148,25 +129,29 @@ class AlienInvasion():
         self.ship.center_ship()
 
         # Reset timer
-        self.timer.update_time()
-        self.timer.reset_time()
+        self.interface.timer.reset_time()
+
+        # Reset Score
+        self.interface.update_score()
 
         # Reset settings
         self.settings.initialize_dynamic_settings()
 
     def _check_keydown_events(self, event):
-        if event.key == pygame.K_RIGHT:
-            self.ship.moving_right = True
-        elif event.key == pygame.K_LEFT:
-            self.ship.moving_left = True
         # Exit by 'Q'
-        elif event.key == pygame.K_q:
+        if event.key == pygame.K_q:
             sys.exit()
-        elif event.key == pygame.K_SPACE:
-            self._fire_bullet()
-        # Start the game by 'P'
-        elif event.key == pygame.K_p or event.key == pygame.K_SPACE:
-            self._start_game()
+        if self.stats.game_active:
+            if event.key == pygame.K_RIGHT:
+                self.ship.moving_right = True
+            elif event.key == pygame.K_LEFT:
+                self.ship.moving_left = True
+            elif event.key == pygame.K_SPACE:
+                self._fire_bullet()
+        else:
+            # Start the game by 'P'
+            if event.key == pygame.K_p:
+                self._start_game()
 
     def _check_keyup_events(self, event):
         if event.key == pygame.K_RIGHT:
@@ -194,9 +179,11 @@ class AlienInvasion():
         collisions = pygame.sprite.groupcollide(
             self.bullets, self.aliens, True, True)
 
-        for colission in  collisions:
-            self.stats.score += self.settings.alien_score
-            self._update_score()
+        if collisions:
+            for aliens in  collisions.values():
+                self.stats.score += self.settings.alien_score * len(aliens)
+            self.interface.update_score()
+            self._check_best_score()   
 
         if not self.aliens:
             self.bullets.empty()
@@ -206,6 +193,11 @@ class AlienInvasion():
         # Check collisions
         collisions = pygame.sprite.groupcollide(
             self.bullets, self.aliens, True, True)
+
+    def _check_best_score(self):
+        if self.stats.score > self.stats.best_score:
+            self.stats.best_score = self.stats.score
+            self.interface.update_best_score()
 
     def _create_fleet(self):
         """ Create an alien fleet """
@@ -296,11 +288,7 @@ class AlienInvasion():
                 self._ship_hit()
                 break
 
-    def _format_time(self):
-        seconds = self.timer.time // 1000 
-        minutes = seconds // 60
-        seconds -= minutes * 60 
-        return "{0:02}:{1:02}".format(minutes, seconds)
+
 
 
 
