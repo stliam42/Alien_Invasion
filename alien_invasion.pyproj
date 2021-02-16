@@ -32,6 +32,9 @@
     <Compile Include="button.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="interface.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="timer.py">
       <SubType>Code</SubType>
     </Compile>
