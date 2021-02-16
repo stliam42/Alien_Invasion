@@ -82,10 +82,13 @@ class Interface():
         self.best_score_field = Field(self)
         self.update_best_score()
 
+<<<<<<< HEAD
         # Level
         self.level_field = Field(self)
         self.update_level()
 
+=======
+>>>>>>> 120b1c1aa86101a6acabbd1a2dbb44b1ca4ae67b
         # Time
         self.time_field = Field(self)
         self.update_time_field()
@@ -109,16 +112,22 @@ class Interface():
         self.time_field.msg_image_rect.midtop = self.screen.get_rect().midtop
         self.time_field.msg_image_rect.top = 10
 
+<<<<<<< HEAD
     def update_level(self):
         self.level_field.update_text(f"Level: {self.stats.level}")
         self.level_field.msg_image_rect.right = self.screen_rect.right - 20
         self.level_field.msg_image_rect.top = self.best_score_field.msg_image_rect.bottom + 10
 
+=======
+>>>>>>> 120b1c1aa86101a6acabbd1a2dbb44b1ca4ae67b
 
     def update_interface(self):
         self.best_score_field.draw()
         self.score_field.draw()
+<<<<<<< HEAD
         self.level_field.draw()
+=======
+>>>>>>> 120b1c1aa86101a6acabbd1a2dbb44b1ca4ae67b
         self.time_field.draw()
         self.timer.update_time()
 
