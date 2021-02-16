@@ -206,6 +206,11 @@ class AlienInvasion():
             self.stats.best_score = self.stats.score
             self.interface.update_best_score()
 
+    def _check_best_score(self):
+        if self.stats.score > self.stats.best_score:
+            self.stats.best_score = self.stats.score
+            self.interface.update_best_score()
+
     def _create_fleet(self):
         """ Create an alien fleet """
         for row_number in range(self._get_number_rows()):
